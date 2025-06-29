@@ -1,0 +1,699 @@
+﻿@using Microsoft.AspNetCore.Http
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+    <link href="/Mamu/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/Mamu/css/bootstrap-icons.css">
+    <link href="/Mamu/css/custome.css" rel="stylesheet" />
+    <link href="/Mamu/css/icomoon.css" rel="stylesheet" />
+    <link href="/Mamu/css/inner.css" rel="stylesheet">
+    <link href="/Mamu/css/header.css" rel="stylesheet">
+    <link href="/Mamu/css/common.css" rel="stylesheet">
+    @*FOR DATATABLES*@
+    <link rel="stylesheet" href="/Mamu/dt-css/jquery.dataTables.min.css" type="text/css" />
+    <link rel="stylesheet" href="/Mamu/dt-css/buttons.dataTables.min.css" type="text/css" />
+    <link rel="stylesheet" href="/Mamu/css/sweetalert2.min.css">
+    <link href="/Mamu/css/searchable-select.min.css" rel="stylesheet" />
+
+
+    <!-- SCRIPTS -->
+    <script type="text/javascript" src="/Mamu/js/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="/Mamu/js/bootstrap.bundle.js"></script>
+    <link href="/Mamu/css/datepicker.css" rel="stylesheet" type="text/css" />
+    <script src="/Mamu/js/bootstrap-datepicker.js"></script>
+    <script type="text/javascript" src="/Mamu/js/custom.js"></script>
+    <script type="text/javascript" src="/Mamu/js/home.js"></script>
+    <script src="/Mamu/js/sweetalert.min.js"></script>
+
+    <script src="/Mamu/js/searchable-select.min.js"></script>
+    <script src="/Mamu/js/signalr.js"></script>
+    <script src="/Mamu/js/signalr_dataHub.js"></script>
+    <!-- FOR DATATABLE -->
+    <script src="/Mamu/dt-js/jquery.dataTables.min.js"></script>
+    <script src="/Mamu/dt-js/dataTables.buttons.min.js"></script>
+    <script src="/Mamu/dt-js/dataTables.fixedHeader.min.js"></script>
+    <script src="/Mamu/dt-js/jszip.min.js"></script>
+    <script src="/Mamu/dt-js/pdfmake.min.js"></script>
+    <script src="/Mamu/dt-js/vfs_fonts.js"></script>
+    <script src="/Mamu/dt-js/buttons.html5.min.js"></script>
+    <script src="/Mamu/dt-js/buttons.print.min.js"></script>
+
+    @* For Font Awsome *@
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+    @* Font Family CDN Link *@
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+
+
+    <style>
+        .multiLaung > a {
+            display: inline;
+            float: right;
+        }
+    </style>
+    @*@Scripts.Render("/bundles/modernizr")*@ @*
+         <script type="text/javascript">
+             $(function () {
+                 $('#datetimepicker1').datetimepicker();
+                 $('#datetimepicker2').datetimepicker();
+                 $('#datetimepicker3').datetimepicker();
+                 $('#datetimepicker4').datetimepicker();
+             });
+        </script>*@
+    <script type="text/javascript">
+           $(document).ready(function () {
+               //$("#load-loader").fadeOut(500);
+               window.history.forward();
+               $(function () {
+                   var windowheight = $(window).height();
+                   var headerheight = $("header").height();
+                   var footerheight = $("footer").height();
+                   var pagecon_height = windowheight - (headerheight + footerheight + 30);
+                   $('.setauction-bg,.inner-section').css("min-height", pagecon_height + "px");
+                   GetTimeValue();
+                   @* sessionUserId = @profile.UserId;*@
+               });
+           });
+           $(document).ready(function () {
+
+
+
+               $('#custom-table').DataTable({
+                           scrollY: '478px',
+                           scrollCollapse: true,
+                      scrollX: true,
+                           dom: 'Bfrtip',
+                           lengthMenu: [
+                               [10, 25, 50, -1],
+                               ['10 rows', '25 rows', '50 rows', 'Show all']
+                           ],
+                           //buttons: [
+                           //    'copy', 'csv', 'excel', 'pdf', 'print', 'pageLength'
+                           //],
+                           buttons: [
+                {
+                extend: 'copyHtml5',
+                exportOptions: {
+                    //columns: ':not(:last-child)'
+                },
+                titleAttr: 'Copy'
+            },
+                {
+                extend: 'excelHtml5',
+                    exportOptions: {
+                        //columns: ':not(:last-child)'
+                    },
+                    title: 'i4ms E-auction',
+                    titleAttr: 'Excel'
+                               }, {
+                                   extend: 'pdfHtml5',
+                    customize: function (doc) {
+                        doc.content[1].table.widths = Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                        doc.content.splice(1, 0, {
+                            margin: [0, 0, 0, 12],
+                            alignment: 'center',
+                            image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIIAAAApCAYAAAD52PHQAAAACXBIWXMAAAsTAAALEwEAmpwYAAAFu2lUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgOS4xLWMwMDEgNzkuYThkNDc1MywgMjAyMy8wMy8yMy0wODo1NjozNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iIHhtbG5zOnBob3Rvc2hvcD0iaHR0cDovL25zLmFkb2JlLmNvbS9waG90b3Nob3AvMS4wLyIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0RXZ0PSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VFdmVudCMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDIzLjQgKFdpbmRvd3MpIiB4bXA6Q3JlYXRlRGF0ZT0iMjAyMi0wOC0yMlQxNToyMTo0MCswNTozMCIgeG1wOk1vZGlmeURhdGU9IjIwMjMtMDgtMTBUMTE6MzU6MzUrMDU6MzAiIHhtcDpNZXRhZGF0YURhdGU9IjIwMjMtMDgtMTBUMTE6MzU6MzUrMDU6MzAiIGRjOmZvcm1hdD0iaW1hZ2UvcG5nIiBwaG90b3Nob3A6Q29sb3JNb2RlPSIzIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjcyYjRiOGE4LTQ4NjItNmM0Mi04ZWVhLTZiZWU2MTRkOTA2OSIgeG1wTU06RG9jdW1lbnRJRD0i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'
+                        });
+                        doc.styles.title = {
+                            fontSize: '0'
+                        },
+                            doc.styles['table'] = { width: 100 }
+                    },
+
+
+                                   //download: 'open',
+                                   pageSize: 'A4',
+                                   orientation: 'landscape',
+                                   //orientation: 'landscape',
+                                   //pageSize: 'LEGAL',
+                                   scroll: true,
+                                   exportOptions: {
+                                       columns: ':visible'
+                                       //columns: ':not(:last-child)'
+                                   },
+
+                                   title: 'i4MS',
+                                   text: '',
+                                   titleAttr: 'Pdf',
+
+                               },
+
+                {
+                   extend: 'print',
+                    exportOptions: {
+                        //columns: ':not(:last-child)'
+                    },
+                   //autoPrint: false,
+                   title: '',
+                    customize: function (win) {
+                        $(win.document.body).prepend('<img src="@Configuration.GetSection("Path")["PrintLogoUrl"]" style="height: 70px;text-align: center;display: block;margin: 0 auto;margin-top: 1rem;" />');
+                   },
+                   text: '',
+                   titleAttr: 'Print'
+                               },
+                               {
+                                   extend: 'pageLength',
+                                   text: '',
+                                   titleAttr: 'Show Rows',
+                                   orientation: 'landscape'
+                               }
+
+               ],
+                           initComplete: function () {
+                               $('.buttons-copy').html('<div class="d-flex align-items-center" ><em class="bi bi-layers fs-5 table-export-icon" /></em> <p class="mb-0 ms-1">Copy<p></div>')
+                               $('.buttons-excel').html('<div class="d-flex align-items-center"><em class="bi bi-file-earmark-excel fs-5 table-export-icon" /></em> <p class="mb-0 ms-1">Excel<p></div>')
+                               $('.buttons-pdf').html('<div class="d-flex align-items-center"><em class="bi bi-file-earmark-pdf fs-5 table-export-icon" /></em> <p class="mb-0 ms-1">PDF<p></div>')
+                               $('.buttons-print').html('<div class="d-flex align-items-center"><em class="bi bi-printer fs-5 table-export-icon" /></em> <p class="mb-0 ms-1">Print<p></div>')
+                               $('.buttons-page-length').html('<div class="d-flex align-items-center"><em class="bi bi-eye fs-5 table-export-icon" /></em> <p class="mb-0 ms-1">Show Rows<p></div>')
+                           }
+               });
+
+
+        $('#Pagination-table-total').DataTable({
+                        /* scrollY: '550px',*/
+                         scrollY: '478px',
+                           scrollCollapse: true,
+                       //scrollX: true,
+                           dom: 'Bfrtip',
+
+             lengthMenu: [
+                 [10, 25, 50, -1],
+                 ['10 rows', '25 rows', '50 rows', 'Show all']
+             ],
+                           //buttons: [
+                           //    'copy', 'csv', 'excel', 'pdf', 'print', 'pageLength'
+                           //],
+                           buttons: [
+                {
+                                   extend: 'copyHtml5',
+                                   footer: true,
+                exportOptions: {
+                },
+                titleAttr: 'Copy'
+            },
+                {
+                    extend: 'excelHtml5',
+                    footer: true,
+                    exportOptions: {
+                    },
+                    titleAttr: 'Excel'
+                               },
+                               {
+                                   extend: 'pdfHtml5', footer: true,
+                    customize: function (doc) {
+                        doc.content[1].table.widths = Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                        doc.content.splice(1, 0, {
+                            margin: [0, 0, 0, 12],
+                            alignment: 'center',
+                            image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIIAAAApCAYAAAD52PHQAAAACXBIWXMAAAsTAAALEwEAmpwYAAAFu2lUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgOS4xLWMwMDEgNzkuYThkNDc1MywgMjAyMy8wMy8yMy0wODo1NjozNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iIHhtbG5zOnBob3Rvc2hvcD0iaHR0cDovL25zLmFkb2JlLmNvbS9waG90b3Nob3AvMS4wLyIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0RXZ0PSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VFdmVudCMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDIzLjQgKFdpbmRvd3MpIiB4bXA6Q3JlYXRlRGF0ZT0iMjAyMi0wOC0yMlQxNToyMTo0MCswNTozMCIgeG1wOk1vZGlmeURhdGU9IjIwMjMtMDgtMTBUMTE6MzU6MzUrMDU6MzAiIHhtcDpNZXRhZGF0YURhdGU9IjIwMjMtMDgtMTBUMTE6MzU6MzUrMDU6MzAiIGRjOmZvcm1hdD0iaW1hZ2UvcG5nIiBwaG90b3Nob3A6Q29sb3JNb2RlPSIzIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjcyYjRiOGE4LTQ4NjItNmM0Mi04ZWVhLTZiZWU2MTRkOTA2OSIgeG1wTU06RG9jdW1lbnRJRD0i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'
+                        });
+                        doc.styles.title = {
+                            fontSize: '0'
+                        },
+                            doc.styles['table'] = { width: 100 }
+                    },
+                                   pageSize: 'A4',
+                                   orientation: 'landscape',
+                                   scroll: true,
+                                   exportOptions: {
+                                       columns: ':visible'
+                                   },
+                                   title: 'i4MS',
+                                   text: '',
+                                   titleAttr: 'Pdf',
+                               },
+
+
+                {
+                    extend: 'print', footer: true,
+
+                    exportOptions: {
+                        columns: ':visible'
+                       /* columns: ':not(:last-child)'*/
+                    },
+                   //autoPrint: false,
+                   title: '',
+                   customize: function (win) {
+                       $(win.document.body).prepend('<img src="@Configuration.GetSection("Path")["PrintLogoUrl"]" style="height: 150px;text-align: center;display: block;margin: 0 auto;margin-top: 1rem;" />');
+                   },
+                   text: '<span style="font-size: 20px;"><i class="icon-print-solid"></i></span>',
+                   titleAttr: 'Print'
+                               },
+
+
+
+                               {
+                                   extend: 'pageLength',
+                                   text: '',
+                                   titleAttr: 'Show Rows'
+                               }
+
+                         ],
+                         initComplete: function () {
+                             $('.buttons-colvis').html('<div class="d-flex align-items-center"><i class="icon-eye-solid fs-3 table-export-icon" /></i> <p class="mb-1 ml-1">Column Visibility<p></div>')
+
+                             $('.buttons-copy').html('<div class="d-flex align-items-center" ><em class="bi bi-layers fs-5 table-export-icon" /></em> <p class="mb-0 ms-1">Copy<p></div>')
+                             $('.buttons-excel').html('<div class="d-flex align-items-center"><em class="bi bi-file-earmark-excel fs-5 table-export-icon" /></em> <p class="mb-0 ms-1">Excel<p></div>')
+                             $('.buttons-pdf').html('<div class="d-flex align-items-center"><em class="bi bi-file-earmark-pdf fs-5 table-export-icon" /></em> <p class="mb-0 ms-1">PDF<p></div>')
+                             $('.buttons-print').html('<div class="d-flex align-items-center"><em class="bi bi-printer fs-5 table-export-icon" /></em> <p class="mb-0 ms-1">Print<p></div>')
+                             $('.buttons-page-length').html('<div class="d-flex align-items-center"><em class="bi bi-eye fs-5 table-export-icon" /></em> <p class="mb-0 ms-1">Show Rows<p></div>')
+                         }
+
+                       });
+
+
+           });
+    </script>
+    <script>
+        function GetTimeValue() {
+            var date = "";
+            var time = "";
+            var m_names = new Array("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
+            var d = new Date();
+            var curr_date = d.getDate();
+            var curr_month = d.getMonth();
+            var curr_year = d.getFullYear();
+            date = curr_date + "-" + m_names[curr_month] + "-" + curr_year;
+            var a_p = "";
+            var d = new Date();
+            var curr_hour = d.getHours();
+            var ss = d.getSeconds();
+            if (curr_hour < 12) {
+                a_p = "AM";
+            }
+            else {
+                a_p = "PM";
+            }
+            if (curr_hour == 0) {
+                curr_hour = 12;
+            }
+            if (curr_hour > 12) {
+                curr_hour = curr_hour - 12;
+            }
+            var curr_min = d.getMinutes();
+            curr_min = curr_min + "";
+            if (curr_min.length == 1) {
+                curr_min = "0" + curr_min;
+            }
+            if (ss <= 9) {
+                ss = "0" + ss;
+            }
+            time = " " + curr_hour + ":" + curr_min + ":" + ss + " " + a_p;
+            $("#WelcomeTime").text(date + "" + time);
+        }
+        setInterval(function () { GetTimeValue() }, 1000);
+    </script>
+    <script type="text/javascript">
+        var UserType ="";
+        var UserId ="";
+             $(document).ready(function () {
+                 $("#editDetails").click(function () {
+                     var userId = $("#UserId").value();
+                     $.ajax({
+                         type: "POST",
+                         url: "/EditProfile/EditProfile?userId=" + userId,
+                         data: null,
+                         contentType: "application/json; charset=utf-8",
+                         dataType: "json",
+                         success: function (data) {
+                         },
+                         error: function (err) {
+                         }
+                     })
+
+                 })
+             });
+
+    </script>
+</head>
+<body>
+    <header>
+        <div class="page-topbar">
+            <div class="logo-area">
+                <img src="/Mamu/Images/odisha-logo-white.png" alt="Odisha Govt" class="main-logo">
+                <h1 class="text-uppercase">
+
+                    @*<small> through the ICT Authority</small>*@
+                </h1>
+            </div>
+            <div class="quick-area">
+                <h2 class="title-header">Stock Management System Dashboard</h2>
+                <div class="top-menu-section d-flex gap-xxl-3 gap-xl-3 gap-0 align-items-center">
+                    <div class="i4ms-online">
+                        <img src="/Mamu/Images/i4ms-logo-white.png" alt="i4ms Online" class="me-2">
+                    </div>
+                    <ul class="side-options ps-0">
+                        <li>
+                            <label id="switch" class="switch mobile-hide">
+                                <input type="checkbox" onchange="toggleTheme()" id="slider">
+                                <span class="slider round"></span>
+                            </label>
+
+                            @*<button class="theme-switcher gray-circle-btn" type="button" title="Switch theme">
+                                <span class="sr-only">Switch theme</span>
+                                <svg (click)="toggleTheme()" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun sun-icon" aria-hidden="true"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                                <svg (click)="toggleTheme()" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon moon-icon" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                            </button>*@
+
+                        </li>
+
+                        <li class="notification-wrapper">
+                            <a class="notification dropdown-btn position-relative pointer" title="To messages">
+                                <i class="fa fa-bell-o fs-4"></i>
+                                <span class="position-absolute top-[-2px] start-100 translate-middle badge rounded-pill bg-danger">
+                                    3
+                                </span>
+                            </a>
+                            <ul class="users-item-dropdown notification-dropdown dropdown">
+                                <li>
+                                    <a href="##" class="d-flex align-items-center flex-nowrap">
+                                        <div class="notification-dropdown-icon info">
+                                            <i class="fa fa-check"></i>
+                                        </div>
+                                        <div class="notification-dropdown-text">
+                                            <span class="notification-dropdown__title">System just updated</span>
+                                            <span class="notification-dropdown__subtitle">
+                                                The system has been successfully upgraded. Read more
+                                                here.
+                                            </span>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="##" class="d-flex align-items-center flex-nowrap">
+                                        <div class="notification-dropdown-icon danger">
+                                            <i class="fa fa-exclamation"></i>
+                                        </div>
+                                        <div class="notification-dropdown-text">
+                                            <span class="notification-dropdown__title">The cache is full!</span>
+                                            <span class="notification-dropdown__subtitle">
+                                                Unnecessary caches take up a lot of memory space and
+                                                interfere ...
+                                            </span>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="##" class="d-flex align-items-center flex-nowrap">
+                                        <div class="notification-dropdown-icon info">
+                                            <i class="fa fa-check"></i>
+                                        </div>
+                                        <div class="notification-dropdown-text">
+                                            <span class="notification-dropdown__title">New Subscriber here!</span>
+                                            <span class="notification-dropdown__subtitle">A new subscriber has subscribed.</span>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="link-to-page" href="##">Go to Notifications page</a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="dropdown d-flex justify-content-center align-items-center">
+                            <a href="#" class="dropdown-toggle me-1" role="button" id="dropdownMenuLink"
+                               data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="/Mamu/Images/profile.jpg" alt="user-image" class="rounded-circle img-inline">
+                            </a>
+                            <span class="administrator dropdown-toggle mt-0" role="button" id="dropdownMenuLink"
+                                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+
+
+                            </span>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+
+                                <a class="dropdown-item" href='@Url.Action("EditProfile", "EditProfile")' title="" data-original-title="Update Profile">
+                                    <em class="bi bi-person fs-6"></em>
+                                    Update Profile
+                                </a>
+
+                                <a class="dropdown-item mobile-show" title="" data-original-title="Theme">
+                                    <i class="bi bi-palette"></i> Theme
+                                    <label id="switch" class="switch ms-2">
+                                        <input type="checkbox" onchange="toggleTheme()" id="slider">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </a>
+                                <a class="dropdown-item toggle" href='@Url.Action("LogOff", "login")' data-original-title="" title="">
+                                    <em class="bi bi-box-arrow-in-right"></em> Logout
+                                </a>
+                            </div>
+                        </li>
+                        <li class="d-lg-block d-md-none">
+                            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
+                                    data-bs-target="#offcanvasNavbar2" aria-controls="offcanvasNavbar2">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <aside class="sidebar fixed-sidebar" id="sidebar">
+
+        <div class="toggle-icon" id="toggleButton"><a class="arrow-icon" href="#"><i id="toggleIcon" class="bi bi-chevron-double-left"></i></a></div>
+
+        <div class="sidebar-list-outer">
+
+            <nav class="navbar navbar-expand-lg navbar-dark flex-column"
+                 aria-label="Offcanvas navbar large">
+
+
+                <div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="offcanvasNavbar2"
+                     aria-labelledby="offcanvasNavbar2Label">
+                    <div class="offcanvas-header">
+                        <h5 class="offcanvas-title" id="offcanvasNavbar2Label">Menu</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
+                                aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <div class="navbar-nav flex-column" id="myDIV">
+                            {
+                            <a class="nav-link menu " id="anch1" href='@Url.Action("Home", "Dashboard")'><i class="fa fa-tachometer me-2"></i> Dashboard</a>
+                            }
+
+                            {
+                            <div class="position-relative custome-dropdown">
+                                <a class="nav-link menu d-flex justify-content-between" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                                    <span>  <i class="fa fa-file-text-o me-2"></i>  Master </span> <i class="bi bi-chevron-down"></i>
+                                </a>
+
+                                <div class="collapse" id="collapseExample">
+                                    <ul class="d-block ps-0">
+                                        <li>
+                                            <a class="nav-link ps-0" rel="noopener" href='@Url.Action("Add", "UserTypeMaster")'>
+
+                                                UserType Master
+                                            </a>
+
+                                        </li>
+                                        <li>
+                                            <a class="nav-link ps-0" rel="noopener" href='@Url.Action("Add", "RoleTypeMaster")'>
+
+                                                RoleType Master
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="nav-link ps-0" rel="noopener" href='@Url.Action("Add", "RoleMaster")'>
+
+                                                Role Master
+                                            </a>
+
+                                        </li>
+                                        <li>
+                                            <a class="nav-link ps-0" rel="noopener" href='@Url.Action("Add", "UserMaster")'>
+
+                                                User Master
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="nav-link ps-0" rel="noopener" href='@Url.Action("LotConfigAdd", "LotConfig")'>
+
+                                                Lot Configuration
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="nav-link ps-0" rel="noopener" href='@Url.Action("AddPaymentType", "Master")'>
+
+                                                Payment Type Master
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="nav-link ps-0" rel="noopener" href='@Url.Action("BlackListBidder", "BlackList")'> Black List</a>
+                                        </li>
+                                        <li>
+                                            <a class="nav-link ps-0" rel="noopener" href='@Url.Action("CreateDelegate", "Delegate")'> Delegate User</a>
+                                        </li>
+                                        <li>
+                                            <a class="nav-link ps-0" rel="noopener" href='@Url.Action("PrequalificationSelectionList", "PrequalificationSelection")'>
+
+                                                Pre-Qualification Committee
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="nav-link ps-0" target="_blank" rel="noopener" href='@Url.Action("AddLotConfiguration", "LotConfiguration")'>
+
+                                                Lot Configuration
+                                            </a>
+                                        </li>
+                                    </ul>
+
+                                </div>
+                            </div>
+
+                            }
+
+                            <div class="position-relative custome-dropdown">
+                                <a class="nav-link menu d-flex justify-content-between" data-bs-toggle="collapse" href="#collapseExampleTwo" role="button" aria-expanded="false" aria-controls="collapseExampleTwo">
+                                    <span>  <i class="fa fa-gavel me-2"></i>  Auction  </span> <i class="bi bi-chevron-down"></i>
+                                </a>
+
+                                <div class="collapse" id="collapseExampleTwo">
+                                    <ul class="d-block ps-0">
+                                        <li>
+                                            <a class="nav-link ps-0" target="" rel="noopener" href='@Url.Action("CreateAuction", "CreateAuction")'>
+
+                                                Create Auction
+                                            </a>
+
+                                        </li>
+                                        <li>
+                                            <a class="nav-link ps-0" rel="noopener" href='@Url.Action("AuctionApprovalView", "AuctionApproval")'>
+
+                                                Auction approval
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="nav-link ps-0" rel="noopener" href='@Url.Action("LiveMonitoring", "LiveMonitoring")'>
+
+                                                Live Monitoring
+                                            </a>
+
+                                        </li>
+                                        <li>
+                                            <a class="nav-link ps-0" rel="noopener" href='@Url.Action("AuctionListView", " AuctionList")'>
+
+                                                Auction List
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="nav-link ps-0" rel="noopener" href='@Url.Action("AuctionCommitteeCreationAdd", "AuctionCommitteeCreation")'>
+
+                                                Auction Committee Creation
+                                            </a>
+                                        </li>
+                                    </ul>
+
+                                </div>
+                            </div>
+
+
+
+
+
+
+                        </div>
+                    </div>
+                </div>
+
+            </nav>
+
+        </div>
+    </aside>
+
+    @*    <div class="loading" id="load-loader">
+        <div class="loader"></div>
+    </div> *@
+    @RenderSection("featured", required: false)
+    @RenderBody()
+    <div class="modal fade bs-example-modal-xl" id="PdfViewModel" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title mt-0" id="myExtraLargeModalLabel">PDF/Image Viewer</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="col-xl-12">
+                        <div class="card" id="pdfdiv">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="py-2 w-100">
+        <p class="copy-right text-center mb-0">
+            © 2025 , All rights reserved
+        </p>
+    </footer>
+
+    @RenderSection("scripts", required: false)
+
+    <script>
+        $(document).ready(function () {
+            sessionUniqueUserId = "";
+        });
+
+        var url = window.location.href;
+        var l = window.location;
+        var base_url = l.protocol + "//" + l.host;
+        $('.navbar-nav a').each(function () {
+            var newUrl = $(this).attr('href');
+            newUrl = base_url + newUrl;
+            if (newUrl == url) {
+                $(this).addClass("active");
+            }
+        }).get();
+    </script>
+
+    <script>
+        $("body").on("click", ".ViewPDF", function () {
+            var path = $(this).attr("id");
+            $("#pdfdiv").html("");
+            var html = "";
+            html += '<object data="' + path + '" type="application/pdf" width="100%" height="650px"></object>';
+            $("#pdfdiv").append(html);
+            $('#PdfViewModel').modal('show');
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $("#toggleButton").click(function () {
+                // Sidebar toggle
+                $("#sidebar").toggleClass("collapsed");
+
+                // Main content toggle
+                $(".main-content").toggleClass("full-width");
+
+                // Change the arrow direction
+                if ($("#sidebar").hasClass("collapsed")) {
+                    $("#toggleIcon").removeClass("bi-chevron-double-left").addClass("bi-chevron-double-right");
+                } else {
+                    $("#toggleIcon").removeClass("bi-chevron-double-right").addClass("bi-chevron-double-left");
+                }
+            });
+        });
+
+
+    </script>
+
+</body>
+</html>

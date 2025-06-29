@@ -1,0 +1,343 @@
+﻿@{
+    ViewData["Title"] = "Registration";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+@Html.AntiForgeryToken()
+<div class="card card--lg main-card" id="divaddform">
+    <div class="nav nav-tabs card--lg__tabs" id="nav-tab" role="tablist">
+        <a href="javascript:;" class="nav-link active">
+            Add
+        </a>
+        <a class="nav-link" asp-controller="Authentication" asp-action="ViewNewRegistration" asp-area="">
+            View
+        </a>
+    </div>
+    <div class="card-body">
+        <h6 class="view-form-details__title mt-0">Basic Information</h6>
+        <div class="row g-4 mb-4">
+            <div class="col-md-8">
+                <div class="form-floating">
+                    <input type="text" class="form-control alphabetInput" id="txtfullname" placeholder="User Full Name" oninput="avoidFirstSpace(event)">
+                    <label for="tname">Full Name<span class="text-danger">*</span></label>
+                    <span class="text-danger" id="errtxtfullname"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="txtUserId" name="txtUserId" placeholder="User ID" autocomplete="off" oninput="avoidFirstSpace(event)">
+                    <label for="userid">User ID<span class="text-danger">*</span></label>
+                    <span class="text-danger" id="errtxtUserId"></span>
+                </div>
+                
+            </div>
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <input type="text" class="form-control" name="txtpassword" id="txtpassword" autocomplete="off" placeholder="Password" oninput="avoidFirstSpace(event)">
+                    <label>Password<span class="text-danger">*</span></label>
+                    <span class="text-danger" id="errtxtpassword"></span>
+                </div>
+            </div>
+
+            
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="txtAddress" name="txtAddress" placeholder="Address" autocomplete="off" oninput="avoidFirstSpace(event)">
+                    <label for="address1">Address<span class="text-danger">*</span></label>
+                    <span class="text-danger" id="errtxtAddress"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <input type="text" class="form-control" name="txtemailid" id="txtemailid" placeholder="Email ID" autocomplete="off" oninput="avoidFirstSpace(event)">
+                    <label for="emailid">Email ID<span class="text-danger">*</span></label>
+                    <span class="text-danger" id="errtxtemailid"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <input type="number" class="form-control" id="txtMobileNumber" placeholder="Mobile No." autocomplete="off" maxlength="10" onKeyPress="if(this.value.length==10) return false;" oninput="avoidFirstSpace(event)">
+                    <label for="mobileno">Mobile No.<span class="text-danger">*</span></label>
+                    <span class="text-danger" id="errtxtMobileNumber"></span>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4">
+            <input type="button" value="Submit" class="btn btn-primary rounded-pill btn-lg" id="FinalSubmit">
+            <button onclick="window.location.reload();" class="btn btn-secondary rounded-pill btn-lg">
+                Reset
+            </button>
+
+        </div>
+    </div>
+</div>
+<script type="text/javascript" nonce="uG2bsk6JIH923nsvp01n24KE">
+    $('#txtfullname').on('change', function(){
+        var inputValue = $('#txtfullname').val().trim();
+        if (inputValue !== "") {
+            $('#txtfullname').removeClass("is-invalid");
+            $('#errtxtfullname').text("");
+        } else {
+            $('#txtfullname').addClass("form-control shadow-sm is-invalid");
+            $('#errtxtfullname').text("Please Enter Full Name!");
+            $('#txtfullname').focus();
+        }
+    });
+    $('#txtUserId').on('change', function(){
+        var inputValue = $('#txtUserId').val().trim();
+        if (inputValue !== "") {
+            $('#txtUserId').removeClass("is-invalid");
+            $('#errtxtUserId').text("");
+        } else {
+            $('#txtUserId').addClass("form-control shadow-sm is-invalid");
+            $('#errtxtUserId').text("Please Enter User ID!");
+            $('#txtUserId').focus();
+        }
+    });
+    $('#txtpassword').on('change', function(){
+        var inputValue = $('#txtpassword').val().trim();
+        if (inputValue !== "") {
+            $('#txtpassword').removeClass("is-invalid");
+            $('#errtxtpassword').text("");
+        } else {
+            $('#txtpassword').addClass("form-control shadow-sm is-invalid");
+            $('#errtxtpassword').text("Please Enter Password!");
+            $('#txtpassword').focus();
+        }
+    });
+    $('#txtAddress').on('change', validateAddress);
+    function validateAddress() {
+        var inputValue = $('#txtAddress').val().trim();
+        if (inputValue !== "") {
+            $('#txtAddress').removeClass("is-invalid");
+            $('#errtxtAddress').text("");
+        } else {
+            $('#txtAddress').addClass("form-control shadow-sm is-invalid");
+            $('#errtxtAddress').text("Please Enter Address!");
+            $('#txtAddress').focus();
+        }
+    }
+    $('#txtemailid').on('change', function () {
+        var inputValue = $(this).val();
+        if (inputValue.length !== 0) {
+            if (isValidEmail(inputValue)) {
+                $('#txtemailid').removeClass("is-invalid");
+                $('#errtxtemailid').text("");
+            } else {
+                $('#txtemailid').addClass("is-invalid");
+                $('#errtxtemailid').text("Please Enter a Valid Email.!");
+            }
+        } else {
+            $('#txtemailid').removeClass("is-invalid");
+            $('#errtxtemailid').text("");
+        }
+    });
+    
+    $('#txtMobileNumber').on('change', validateMobileNumber);
+    function validateMobileNumber() {
+        var inputValue = $('#txtMobileNumber').val().trim();
+        if (inputValue !== "") {
+            if (inputValue.length === 10) {
+                $('#txtMobileNumber').removeClass("is-invalid");
+                $('#errtxtMobileNumber').text("");
+            }
+            else {
+                $('#txtMobileNumber').addClass("form-control shadow-sm is-invalid");
+                $('#errtxtMobileNumber').text("Please Enter a Valid Mobile Number.!");
+                $('#txtMobileNumber').focus();
+            }
+        } else {
+            $('#txtMobileNumber').addClass("form-control shadow-sm is-invalid");
+            $('#errtxtMobileNumber').text("Please Enter Mobile Number.!");
+            $('#txtMobileNumber').focus();
+        }
+    }
+    function isValidEmail(email) {
+            var emailRegex = /^[a-zA-Z0-9._-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+        return emailRegex.test(email);
+    }
+
+</script>
+<script type="text/javascript" nonce="uG2bsk6JIH923nsvp01n24KE">
+    
+
+    $(document).ready(function () {
+        $("#txtemailid").keyup(function () {
+            $(this).val($(this).val().toLowerCase());
+        });
+    });
+    $(".alphabetInput").on("input", function () {
+        var inputValue = $(this).val();
+        var sanitizedValue = inputValue.replace(/[^A-Za-z\s]/g, '');
+
+        if (inputValue !== sanitizedValue) {
+            $(this).val(sanitizedValue);
+        }
+    });
+    function isValidMobileNumber() {
+        let mobileNumber = $('#txtMobileNumber').val();
+        const digitsOnly = mobileNumber.replace(/\D/g, '');
+        return digitsOnly.length >= 10;
+    }
+    $("#txtMobileNumber").on("input", function () {
+        const mobileNumber = $(this).val();
+
+        if (isValidMobileNumber(mobileNumber)) {
+            $(this).removeClass("is-invalid");
+            $('#errtxtMobileNumber').text("");
+        } else {
+            $(this).addClass("is-invalid");
+            $('#errtxtMobileNumber').text("Mobile number should have at least 10 digits.");
+        }
+    });
+    
+
+    
+    function Validations() {
+
+        if ($("#txtfullname").val().trim() != "") {
+            $('#txtfullname').removeClass("is-invalid");
+            $('#errtxtfullname').text("");
+
+        }
+        else {
+            $('#txtfullname').addClass("form-control shadow-sm is-invalid");
+            $('#errtxtfullname').text("Please Enter Full Name!");
+            $('#txtfullname').focus();
+            return false;
+        }
+        if ($("#txtUserId").val().trim() != "") {
+            $('#txtUserId').removeClass("is-invalid");
+            $('#errtxtUserId').text("");
+
+        }
+        else {
+            $('#txtUserId').addClass("form-control shadow-sm is-invalid");
+            $('#errtxtUserId').text("Please Enter User ID!");
+            $('#txtUserId').focus();
+            return false;
+        }
+        if ($("#txtpassword").val().trim() != "") {
+            $('#txtpassword').removeClass("is-invalid");
+            $('#errtxtpassword').text("");
+
+        }
+        else {
+            $('#txtpassword').addClass("form-control shadow-sm is-invalid");
+            $('#errtxtpassword').text("Please Enter Password!");
+            $('#txtpassword').focus();
+            return false;
+        }
+        if ($("#txtAddress").val().trim() != "") {
+            $('#txtAddress').removeClass("is-invalid");
+            $('#errtxtAddress').text("");
+
+        }
+        else {
+            $('#txtAddress').addClass("form-control shadow-sm is-invalid");
+            $('#errtxtAddress').text("Please Enter Address!");
+            $('#txtAddress').focus();
+            return false;
+        }
+        if ($("#txtemailid").val().trim() != "") {
+            $('#txtemailid').removeClass("is-invalid");
+            $('#errtxtemailid').text("");
+
+        }
+        else {
+            $('#txtemailid').addClass("form-control shadow-sm is-invalid");
+            $('#errtxtemailid').text("Please Enter a Valid Email.!");
+            $('#txtemailid').focus();
+            return false;
+        }
+        if ($("#txtMobileNumber").val().trim() != "") {
+            $('#txtMobileNumber').removeClass("is-invalid");
+            $('#errtxtMobileNumber').text("");
+
+        }
+        else {
+            $('#txtMobileNumber').addClass("form-control shadow-sm is-invalid");
+            $('#errtxtMobileNumber').text("Please Enter Mobile Number.!");
+            $('#txtMobileNumber').focus();
+            return false;
+        }
+        
+        return true;
+    }
+
+    $("#FinalSubmit").on("click", function () {
+       
+        
+            if (Validations()) {
+                var TroupeData = new FormData();
+                TroupeData.append("FullName", $('#txtfullname').val());
+                TroupeData.append("MobileNo", $('#txtMobileNumber').val());
+                TroupeData.append("Email", $('#txtemailid').val());
+                TroupeData.append("UserID", $('#txtUserId').val());
+                TroupeData.append("Password", $('#txtpassword').val());
+                TroupeData.append("Address", $('#txtAddress').val());
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You want to save the Details.",
+                    icon: 'success',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Submit'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        AddTroupeData(TroupeData);
+                    }
+                }); 
+            }
+            function AddTroupeData(Data) {
+                $.ajax({
+                    type: "post",
+                    url: "../Authentication/Registration",
+                    contentType: false,
+                    processData: false,
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("RequestVerificationToken",
+                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                    },
+                    data: Data,
+                    success: function (response) {
+                        response = JSON.parse(response);
+                        if (response.data == 1) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: response.message
+                            }).then(() => {
+                                window.location.href = 'ViewNewRegistration';
+                            });
+                        }
+                        else if (response.data == 0) {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'warning',
+                                text: response.message
+                            });
+                        }
+                        
+                        else {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'waring',
+                                text: response.message
+                            });
+                        }
+                    },
+                    error: function (error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!!',
+                            text: error
+                        });
+                    }
+                });
+            }
+        
+    });
+    
+</script>
+

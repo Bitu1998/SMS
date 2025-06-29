@@ -1,0 +1,161 @@
+﻿@{
+    Layout = null; ViewData["Title"] = "Pepsi Stock Management System";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"]</title> <!-- Bootstrap & Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f1f3f6;
+            color: #333;
+        }
+        /* Navbar / .navbar { background-color: #002B5C; } .navbar .navbar-brand, .navbar .nav-link, .navbar .btn { color: white !important; } .navbar .btn:hover { background-color: #005CB4; color: #fff; } / Hero Section */
+
+        .hero {
+            height: 60vh;
+            background: url('https://images.unsplash.com/photo-1602084113276-7b30e3f76d76?auto=format&fit=crop&w=1400&q=80') no-repeat center center/cover;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 43, 92, 0.7);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: bold;
+        }
+
+        .features {
+            padding: 5rem 0;
+        }
+
+            .features .card {
+                border: none;
+                border-radius: 15px;
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+                background-color: #ffffff;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            }
+
+                .features .card:hover {
+                    transform: translateY(-8px);
+                    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+                }
+
+                .features .card i {
+                    font-size: 2rem;
+                    color: #005CB4;
+                    margin-bottom: 1rem;
+                }
+
+        footer {
+            background-color: #002B5C;
+            color: white;
+            padding: 1rem 0;
+            text-align: center;
+        }
+
+        @@media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg px-4">
+        <a class="navbar-brand" href="#">Pepsi Inventory</a>
+        <div class="ms-auto">
+            <form class="d-flex" method="get" action="/Authentication/LogIn">
+                <button class="btn btn-primary" type="submit">Login</button>
+            </form>
+        </div>
+    </nav>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content container">
+            <h1>Pepsi Stock Management System</h1>
+            <p class="lead mt-3">Real-time tracking, smart analytics, and full inventory control.</p>
+        </div>
+    </section>
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container text-center">
+            <h2 class="mb-5 fw-bold text-primary">Key Features</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card p-4">
+                        <i class="fas fa-boxes"></i>
+                        <h5 class="fw-semibold">Inventory Control</h5>
+                        <p>Manage product stock levels, movements, and low stock alerts.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card p-4">
+                        <i class="fas fa-users-cog"></i>
+                        <h5 class="fw-semibold">User Roles</h5>
+                        <p>Admin, Manager, and Staff access levels for secure operations.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card p-4">
+                        <i class="fas fa-chart-bar"></i>
+                        <h5 class="fw-semibold">Reports & Analytics</h5>
+                        <p>View transactions, inventory summaries, and download PDF reports.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card p-4">
+                        <i class="fas fa-warehouse"></i>
+                        <h5 class="fw-semibold">Multi-Warehouse</h5>
+                        <p>Support for multiple storage locations with centralized tracking.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card p-4">
+                        <i class="fas fa-barcode"></i>
+                        <h5 class="fw-semibold">Batch & Expiry</h5>
+                        <p>Monitor batch numbers and expiry dates for all perishable items.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card p-4">
+                        <i class="fas fa-shield-alt"></i>
+                        <h5 class="fw-semibold">Audit Logs</h5>
+                        <p>Complete action history for accountability and system tracking.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Footer -->
+    <footer>
+        <div>© 2025 PepsiCo Inventory System | Powered by .NET Core</div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

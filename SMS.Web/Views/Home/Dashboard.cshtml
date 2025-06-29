@@ -1,0 +1,48 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+<div class="card card--lg">
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>@ViewData["Title"]</h1>
+            <p>Welcome to the dashboard! Here you can find an overview of your system's status and recent activities.</p>
+        </div>
+    </div>
+        <div class="card-body">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header">System Status</div>
+                <div class="card-body">
+                    <p>All systems operational.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header">Recent Activities</div>
+                <div class="card-body">
+                    <ul>
+                        <li>User JohnDoe logged in.</li>
+                        <li>New order placed by JaneSmith.</li>
+                        <li>System maintenance completed successfully.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header">Notifications</div>
+                <div class="card-body">
+                    <p>No new notifications.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+   

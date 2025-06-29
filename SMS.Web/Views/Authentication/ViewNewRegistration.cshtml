@@ -1,0 +1,179 @@
+﻿@{
+    ViewData["Title"] = "Registration Details";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+<style>
+    .urgentBox {
+        background-image: url(../images/urgentBg.png);
+        background-repeat: no-repeat;
+        background-position: right bottom;
+        font-size: 12px;
+        color: #555;
+        padding: 7px;
+        display: block;
+        right: 0;
+        margin: 0;
+        line-height: .5em;
+        width: 60px;
+    }
+
+        .urgentBox label {
+            color: #fff;
+            bottom: 0;
+            text-align: center;
+            margin: 2px;
+        }
+
+    .modal-lg, .modal-xl {
+        max-width: 1077px;
+    }
+</style>
+@Html.AntiForgeryToken()
+<div class="card card--lg main-card">
+    <div class="nav nav-tabs card--lg__tabs" id="nav-tab" role="tablist">
+        <a href="../Authentication/Registration" class="nav-link">
+            Add
+        </a>
+        <a href="javascript:;" class="nav-link active">
+            View
+        </a>
+        
+    </div>
+    <div class="card-body">
+        <div class="table-responsive--rounded table-responsive--datatable">
+            <div class="table-responsive">
+                <table class="table table-borderless" id="datatable">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="text-center" style="width: 40px;">Sl#</th>
+                            <th scope="col">FullName</th>
+                            <th scope="col">MobileNo</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">UserID</th>
+                            <th scope="col">Address</th>
+                            <th scope="col">UserType</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody id="bindtable">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" nonce="uG2bsk6JIH923nsvp01n24KE">
+
+        $(document).ready(function () {
+           LoadDataTable(0);
+        });
+        function LoadDataTable(defaultValue=0) {
+            var record = new Object();
+            let dtable = $('#datatable').DataTable({
+                "destroy": true,
+                "language": {
+                    "emptyTable": 'No  Record Found.!',
+                    "zeroRecords": 'No  Record Found.!',
+                    "processing": false,
+                },
+                "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                "dom": '<"row"<"col-sm-12 col-md-6 text-right"lB><"col-sm-12 col-md-6 text-right"f>><"row"<"col-sm-12"tr>><"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                "deferRender": true,
+                "processing": false,
+                "searching": true,
+                "bSort": false,
+                "ajax": {
+                    data: record,
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("RequestVerificationToken",
+                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                    },
+                    url: '@Url.Action("ViewNewRegistration", "Authentication")',
+                    type: "POST",
+                    dataType: "json"
+                },
+                "columnDefs": [{
+                    "targets": [0],
+                    "visible": true,
+                    "searchable": false
+                }],
+
+                columnDefs: [{
+                    targets: 0,
+                    autoWidth: true,
+                    searchable: true,
+                    orderable: false,
+                    render: function (data, type, row, info) {
+                        return parseInt(info.row) + 1;
+                    }
+                }],
+                columns:[
+                    { "data":"ID","name":"Slno"},
+                    { "data": "FullName", "name": "FullName" },
+                    { "data": "MobileNo", "name": "MobileNo" },
+                    { "data": "Email", "name": "Email" },
+                    { "data": "UserID", "name": "UserID" },
+                    { "data": "Address", "name": "Address" },
+                    { "data": "UserType", "name": "UserType" }
+                    
+                ],
+                buttons:
+                    [{
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        title: $('h1').text(),
+                        exportOptions: {
+                            columns: ':not(.no-print)'
+                        },
+                        footer: true,
+                        className: 'buttons-print btn-ps btn-sm',
+                        customize: function (win) {
+                            $(win.document.head).append("<link href='/css/styles.css' rel='stylesheet'><link href='/css/Print.css' rel='stylesheet'><link rel='stylesheet' href='/css/bootstrap.min.css'>");
+                            let datetime = moment().format('DD MMM YYYY hh:mm');
+                            let createdby = '@User.FindFirst("FULLNAME")?.Value.ToString()  ';
+
+                            $(win.document.body).prepend("<header><nav class='navbar navbar-expand-xl'><div class='container-fluid'><h1><a class='navbar-brand' title='Government of Odisha'><img src='/images/logo1.png' alt='Government of Odisha' class='navbar-brand__img'></a></h1><h5 class='page-name'>@ViewData["Title"]</h5></div></nav><div class='row'><div class='col-sm-6 float-start'><label><span class='font-bold'>Created On:</span>" + datetime + "</label></div><div class='col-sm-6 float-end'><label><span class='font-bold'>Created By:</span>" + createdby + "</label></div></div></header>");
+                            $(win.document.body).find('table').addClass('table-bordered');
+                        },
+                        autoPrint: true
+                    },
+                    {
+                        extend: 'excel',
+                        title: '@ViewData["Title"]',
+                        exportOptions: {
+                            columns: ':not(.no-print)'
+                        },
+                        className: 'btn btn-success btn-sm mx-1',
+                        text: '<i class="icon-excel"></i> Excel',
+                        className: 'buttons-excel  btn-cs btn-sm',
+                    }, 'pdf']
+                ,
+                initComplete: function () {
+                    $('.buttons-csv').html('<i class="bi bi-filetype-csv"></i>');
+                    $('.buttons-excel').html('<i class="bi bi-file-earmark-excel-fill"></i>');
+                    $('.buttons-pdf').html('<i class="bi bi-filetype-pdf"></i>');
+                    $('.buttons-print').html('<i class="bi bi-file-earmark-text-fill"></i>');
+                    $('.buttons-print').attr('data-toggle', 'tooltip');
+                    $('.buttons-excel').attr('data-toggle', 'tooltip');
+                    $('.buttons-print').attr('title', 'print table');
+                    $('.buttons-excel').attr('title', 'export to excel');
+                    $('.buttons-print').attr('data-placement', 'right');
+                    $('.buttons-excel').attr('data-placement', 'right');
+                    $('.buttons-print').tooltip({
+                        placement: 'bottom',
+                        title: function () {
+                            return "Print";
+                        }
+                    });
+                    $('.buttons-excel').tooltip({
+                        placement: 'right',
+                        title: function () {
+                            return "Export To Excel";
+                        }
+                    });
+                }
+            });
+        }
+       
+</script>

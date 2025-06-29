@@ -1,0 +1,482 @@
+﻿@{
+    ViewData["Title"] = "Product";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+@Html.AntiForgeryToken()
+<div class="card card--lg main-card" id="divaddform">
+    <div class="nav nav-tabs card--lg__tabs" id="nav-tab" role="tablist">
+        <a href="javascript:;" class="nav-link active">
+            Add
+        </a>
+        <a class="nav-link" asp-controller="Product" asp-action="ViewProduct" asp-area="">
+            View
+        </a>
+    </div>
+    <div class="card-body">
+        <h6 class="view-form-details__title mt-0">Product Information</h6>
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <select class="form-select" id="ddlBrand" name="ddlBrand">
+                        <option value="0">Select Brand</option>
+                    </select>
+                    <label for="tdist">Brand<span class="text-danger">*</span></label>
+                    <span class="text-danger" id="errddlBrand"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <select class="form-select" id="ddlCategory" name="ddlCategory">
+                        <option value="0">Select Category</option>
+                    </select>
+                    <label for="block">Category<span class="text-danger">*</span></label>
+                    <span class="text-danger" id="errddlBlock"></span>
+                </div>
+            </div> 
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <select class="form-select" id="ddlSubCategory" name="ddlSubCategory">
+                        <option value="0">Select SubCategory</option>
+                    </select>
+                    <label for="block">SubCategory<span class="text-danger">*</span></label>
+                    <span class="text-danger" id="errSubCategory"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <select class="form-select" id="ddlProduct" name="ddlProduct">
+                        <option value="0" selected>Select Product</option>
+                    </select>
+                    <label for="block"> Product<span class="text-danger">*</span></label>
+                    <span class="text-danger" id="errddlProduct"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <select class="form-select" id="ddlFlavour" name="ddlFlavour">
+                        <option value="0">Select Flavour</option>
+                    </select>
+                    <label for="tdist">Flavour<span class="text-danger">*</span></label>
+                    <span class="text-danger" id="errFlavour"></span>
+                </div>
+            </div>
+                
+                
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <select class="form-select" id="ddlPackgeType" name="ddlPackgeType">
+                        <option value="0">Select PackgeType</option>
+                    </select>
+                    <label for="tdist">PackgeType<span class="text-danger">*</span></label>
+                    <span class="text-danger" id="errPackgeType"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <select class="form-select" id="ddlUnit" name="ddlUnit">
+                        <option value="0" selected>Select Unit</option>
+                    </select>
+                    <label for="block"> Unit<span class="text-danger">*</span></label>
+                    <span class="text-danger" id="errddlUnit"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <select class="form-select" id="ddlPackSize" name="ddlPackSize">
+                        <option value="0" selected>Select PackSize</option>
+                    </select>
+                    <label for="block"> PackSize<span class="text-danger">*</span></label>
+                    <span class="text-danger" id="errddlPackSize"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <select class="form-select" id="ddlImage" name="ddlImage">
+                        <option value="0" selected>Select Image</option>
+                    </select>
+                    <label for="block"> Image<span class="text-danger">*</span></label>
+                    <span class="text-danger" id="errddlImage"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <input type="text" name="txtMFGDate" id="txtMFGDate" class="form-control" placeholder="MFG Date" autocomplete="off">
+                    <label for="mfgdate">MFG Date<span class="text-danger">*</span></label>
+                    <span class="text-danger" id="errtxtMFGDate"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <input type="text" name="txtEXPDate" id="txtEXPDate" class="form-control" placeholder="EXP Date" autocomplete="off">
+                    <label for="expdate">EXP Date<span class="text-danger">*</span></label>
+                    <span class="text-danger" id="errtxtEXPDate"></span>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="txtBatch" name="txtBatch" placeholder="Batch No">
+                    <label for="txtBatch">Batch No<span class="text-danger">*</span></label>
+                    <input type="hidden" id="hidBranchId" />
+                    <span class="text-danger" id="errtxtBatch"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <input type="number" class="form-control" name="txtPurchagePrice" id="txtPurchagePrice" maxlength="6" placeholder="Purchage Price" autocomplete="off" onKeyPress="if(this.value.length==6) return false;" oninput="avoidFirstSpace(event)">
+                    <label for="pin">Purchage Price<span class="text-danger">*</span></label>
+                    <span class="text-danger" id="errtxtPurchagePrice"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <input type="number" class="form-control" name="txtSellPrice" id="txtSellPrice" maxlength="6" placeholder="Sell Price" autocomplete="off" onKeyPress="if(this.value.length==6) return false;" oninput="avoidFirstSpace(event)">
+                    <label for="pin">Sell Price<span class="text-danger">*</span></label>
+                    <span class="text-danger" id="errtxtSellPrice"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <input type="number" class="form-control" name="txtAvailableQuantity" id="txtAvailableQuantity" maxlength="6" placeholder="Available Quantity" autocomplete="off" onKeyPress="if(this.value.length==6) return false;" oninput="avoidFirstSpace(event)">
+                    <label for="pin">Available Quantity<span class="text-danger">*</span></label>
+                    <span class="text-danger" id="errtxtAvailableQuantity"></span>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4">
+            <input type="button" value="Submit" class="btn btn-primary rounded-pill btn-lg" id="FinalSubmit">
+            <button onclick="window.location.reload();" class="btn btn-secondary rounded-pill btn-lg">
+                Reset
+            </button>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" nonce="uG2bsk6JIH923nsvp01n24KE">
+    $(document).ready(function () {
+        $('#txtMFGDate').datetimepicker({
+            format: 'DD-MMM-YYYY',
+            
+            defaultDate: null
+        });
+        $('#txtEXPDate').datetimepicker({
+            format: 'DD-MMM-YYYY',
+            
+            defaultDate: null
+        });
+        getBrand();
+        getCategory();
+        getFlavour();
+        getPackageType();
+        getUnit();
+        getImage();
+    });
+</script>
+<script type="text/javascript" nonce="uG2bsk6JIH923nsvp01n24KE">
+    function getCategory() {
+        var thisHtml = '<option value="0"> Select Category </option>';
+        $.ajax({
+            url: '@Url.Content("~/")' + 'Master/GetCategory',
+            data: {},
+            type: "get",
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                if (data.state == "success") {
+                    var result = data.data;
+
+                    for (var i = 0; i < result.length; i++) {
+                        thisHtml += '<option value="' + result[i].CategoryID + '">' + result[i].CategoryName + '</option>';
+                    }
+
+                    $('#ddlCategory').html(thisHtml);
+                }
+                else {
+                    $('#ddlCategory').html(thisHtml);
+                }
+            }
+        });
+    }
+    function getBrand() {
+        var thisHtml = '<option value="0"> Select Brand </option>';
+        $.ajax({
+            url: '@Url.Content("~/")' + 'Master/GetBrand',
+            data: {},
+            type: "get",
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                if (data.state == "success") {
+                    var result = data.data;
+                    for (var i = 0; i < result.length; i++) {
+                        thisHtml += '<option value="' + result[i].BrandID + '">' + result[i].BrandName + '</option>';
+                    }
+                    $('#ddlBrand').html(thisHtml);
+                }
+                else {
+                    $('#ddlBrand').html(thisHtml);
+                }
+            }
+        });
+    }
+    function getFlavour() {
+        var thisHtml = '<option value="0"> Select Flavour </option>';
+        $.ajax({
+            url: '@Url.Content("~/")' + 'Master/GetFlavors',
+            data: {},
+            type: "get",
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                if (data.state == "success") {
+                    var result = data.data;
+                    for (var i = 0; i < result.length; i++) {
+                        thisHtml += '<option value="' + result[i].FlavorID + '">' + result[i].FlavorName + '</option>';
+                    }
+                    $('#ddlFlavour').html(thisHtml);
+                }
+                else {
+                    $('#ddlFlavour').html(thisHtml);
+                }
+            }
+        });
+    }
+
+    function getPackageType() {
+        var thisHtml = '<option value="0"> Select PackgeType </option>';
+        $.ajax({
+            url: '@Url.Content("~/")' + 'Master/GetPackageType',
+            data: {},
+            type: "get",
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                if (data.state == "success") {
+                    var result = data.data;
+
+                    for (var i = 0; i < result.length; i++) {
+                        thisHtml += '<option value="' + result[i].PackageTypeID + '">' + result[i].PackageTypeName + '</option>';
+                    }
+
+                    $('#ddlPackgeType').html(thisHtml);
+                }
+                else {
+                    $('#ddlPackgeType').html(thisHtml);
+                }
+            }
+        });
+    }
+    function getUnit() {
+        var thisHtml = '<option value="0"> Select Unit </option>';
+        $.ajax({
+            url: '@Url.Content("~/")' + 'Master/GetUnits',
+            data: {},
+            type: "get",
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                if (data.state == "success") {
+                    var result = data.data;
+
+                    for (var i = 0; i < result.length; i++) {
+                        thisHtml += '<option value="' + result[i].UnitID + '">' + result[i].UnitName + '</option>';
+                    }
+
+                    $('#ddlUnit').html(thisHtml);
+                }
+                else {
+                    $('#ddlUnit').html(thisHtml);
+                }
+            }
+        });
+    }
+    function getImage() {
+        var thisHtml = '<option value="0"> Select Image </option>';
+        $.ajax({
+            url: '@Url.Content("~/")' + 'Master/GetImage',
+            data: {},
+            type: "get",
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                if (data.state == "success") {
+                    var result = data.data;
+
+                    for (var i = 0; i < result.length; i++) {
+                        thisHtml += '<option value="' + result[i].ImageID + '">' + result[i].ImageName + '</option>';
+                    }
+
+                    $('#ddlImage').html(thisHtml);
+                }
+                else {
+                    $('#ddlImage').html(thisHtml);
+                }
+            }
+        });
+    }
+    $("#ddlCategory").change(function () {
+        var thisHtml = '<option value="0"> Select SubCategory </option>';
+        if ($('#ddlCategory').val() != 0) {
+            $.ajax({
+                url: '@Url.Content("~/")' + 'Master/GetSubCategory',
+                data: { CatId: $('#ddlCategory').val() },
+                type: "get",
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                    if (data.state == "success") {
+                        var result = data.data;
+                        for (var i = 0; i < result.length; i++) {
+                            thisHtml += '<option value="' + result[i].SubCategoryID + '">' + result[i].SubCategoryName + '</option>';
+                        }
+                        $('#ddlSubCategory').html(thisHtml);
+                    }
+                    else {
+                        $('#ddlSubCategory').html(thisHtml);
+                    }
+                }
+            });
+        }
+        else {
+            $('#ddlSubCategory').html(thisHtml);
+        }
+    });
+    $("#ddlUnit").change(function () {
+        var thisHtml = '<option value="0"> Select PackSize </option>';
+        if ($('#ddlUnit').val() != 0) {
+            $.ajax({
+                url: '@Url.Content("~/")' + 'Master/GetPackSize',
+                data: { UnitId: $('#ddlUnit').val() },
+                type: "get",
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                    if (data.state == "success") {
+                        var result = data.data;
+                        for (var i = 0; i < result.length; i++) {
+                            thisHtml += '<option value="' + result[i].PackSizeID + '">' + result[i].Quantity + '</option>';
+                        }
+                        $('#ddlPackSize').html(thisHtml);
+                    }
+                    else {
+                        $('#ddlPackSize').html(thisHtml);
+                    }
+                }
+            });
+        }
+        else {
+            $('#ddlPackSize').html(thisHtml);
+        }
+    });
+    $("#ddlSubCategory").change(function () {
+        var thisHtml = '<option value="0"> Select Product </option>';
+        if ($('#ddlSubCategory').val() != 0) {
+            $.ajax({
+                url: '@Url.Content("~/")' + 'Master/GetProduct',
+                data: { subcategory: $('#ddlSubCategory').val(),brandid: $('#ddlBrand').val()},
+                type: "get",
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                    if (data.state == "success") {
+                        var result = data.data;
+                        for (var i = 0; i < result.length; i++) {
+                            thisHtml += '<option value="' + result[i].ProductID + '">' + result[i].ProductName + '</option>';
+                        }
+                        $('#ddlProduct').html(thisHtml);
+                    }
+                    else {
+                        $('#ddlProduct').html(thisHtml);
+                    }
+                }
+            });
+        }
+        else {
+            $('#ddlProduct').html(thisHtml);
+        }
+    });
+
+
+    $("#FinalSubmit").on("click", function () {
+
+
+            //if (Validations()) {
+                var TroupeData = new FormData();
+                TroupeData.append("BrandID", $('#ddlBrand').val());
+                TroupeData.append("CategoryID", $('#ddlCategory').val());
+                TroupeData.append("SubCategoryID", $('#ddlSubCategory').val());
+                TroupeData.append("ProductID", $('#ddlProduct').val());
+                TroupeData.append("FlavorId", $('#ddlFlavour').val());
+                TroupeData.append("PackageTypeID", $('#ddlPackgeType').val());
+                TroupeData.append("unitid", $('#ddlUnit').val());
+                TroupeData.append("PackSizeID", $('#ddlPackSize').val());
+                TroupeData.append("ImageID", $('#ddlImage').val());
+                TroupeData.append("MFGDate", $('#txtMFGDate').val());
+                TroupeData.append("EXPDate", $('#txtEXPDate').val());
+                TroupeData.append("BatchNo", $('#txtBatch').val());
+                TroupeData.append("PurchasePrice", $('#txtPurchagePrice').val());
+                TroupeData.append("SellPrice", $('#txtSellPrice').val());
+                TroupeData.append("AvailableQuantity", $('#txtAvailableQuantity').val());
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You want to save the Details.",
+                    icon: 'success',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Submit'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        AddTroupeData(TroupeData);
+                    }
+                });
+           // }
+            function AddTroupeData(Data) {
+                $.ajax({
+                    type: "post",
+                    url: "../Product/AddProduct",
+                    contentType: false,
+                    processData: false,
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("RequestVerificationToken",
+                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                    },
+                    data: Data,
+                    success: function (response) {
+                        response = JSON.parse(response);
+                        if (response.data == 1) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: response.message
+                            }).then(() => {
+                                window.location.href = 'ViewProduct';
+                            });
+                        }
+                        else if (response.data == 0) {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'warning',
+                                text: response.message
+                            });
+                        }
+
+                        else {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'waring',
+                                text: response.message
+                            });
+                        }
+                    },
+                    error: function (error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!!',
+                            text: error
+                        });
+                    }
+                });
+            }
+
+    });
+</script>
