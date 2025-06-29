@@ -14,16 +14,6 @@ namespace SMS.Model.DTOs
         [Required(ErrorMessage = "Mobile is required.")]
         public string? MOBILENO { get; set; }
     }
-    public class VerifyUser
-    {
-        public string? MOBILENO { get; set; } 
-        public string? captcha { get; set; } 
-    }
-    public class VerifyOfficerRequest
-    {
-        public string? mobileno { get; set; }
-        public string? TYPE { get; set; }
-        public string? otp { get; set; }
-    }
+    
 }
 

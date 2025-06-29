@@ -1,5 +1,4 @@
-﻿using CTMS.Model.Entities.AdminMaster;
-using CTMS.Model.Entities.Master;
+﻿
 using Dapper;
 using SMS.Model.Entities.Master;
 using SMS.Repository.BaseRepository;

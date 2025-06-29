@@ -1,6 +1,5 @@
-using CTMS.Model.Entities.Master;
+
 using SMS.Model.DTOs;
-using SMS.Model.Entities.Registration;
 namespace SMS.Repository.Repositories.Interfaces
 {
     public interface IAuthenticationRepository

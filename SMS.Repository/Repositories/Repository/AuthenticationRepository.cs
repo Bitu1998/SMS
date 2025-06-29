@@ -1,8 +1,6 @@
 
-using CTMS.Model.Entities.Master;
 using Dapper;
 using SMS.Model.DTOs;
-using SMS.Model.Entities.Registration;
 using SMS.Repository.BaseRepository;
 using SMS.Repository.Factory;
 using SMS.Repository.Repositories.Interfaces;

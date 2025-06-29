@@ -1,4 +1,4 @@
-﻿using CTMS.Model.Entities.Master;
+﻿
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SMS.Core;

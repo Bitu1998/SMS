@@ -1,4 +1,4 @@
-using CTMS.Model.Entities.Master;
+
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Localization;
@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using SMS.Core;
 using SMS.Model.DTOs;
-using SMS.Model.Entities.Registration;
 using SMS.Repository.Repositories.Interfaces;
 using System.Security.Claims;
 using System.Xml.Linq;
