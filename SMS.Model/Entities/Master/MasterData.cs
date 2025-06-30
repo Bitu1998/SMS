@@ -8,21 +8,26 @@ namespace SMS.Model.Entities.Master
     {
         public int BrandID { get; set; }
         public string? BrandName { get; set; }
+        public string? CreatedBy { get; set; }
     }
     public class ProductCategoriesMaster
     {
         public int CategoryID { get; set; }
         public string? CategoryName { get; set; }
+        public string? CreatedBy { get; set; }
     }
     public class ProductSubCategoriesMaster
     {
+        public int CategoryID { get; set; }
         public int SubCategoryID { get; set; }
         public string? SubCategoryName { get; set; }
+        public string? CreatedBy { get; set; }
     }
     public class FlavorMaster
     {
         public int FlavorID { get; set; }
         public string? FlavorName { get; set; }
+        public string? CreatedBy { get; set; }
     }
     public class UnitMaster
     {

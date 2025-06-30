@@ -1,0 +1,112 @@
+﻿@{
+    ViewData["Title"] = "Product";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+@Html.AntiForgeryToken()
+<div class="card card--lg main-card" id="divaddform">
+    <div class="nav nav-tabs card--lg__tabs" id="nav-tab" role="tablist">
+        <a href="javascript:;" class="nav-link active">
+            Brand Add
+        </a>
+        <a class="nav-link" asp-controller="Master" asp-action="AddCategory" asp-area="">
+            Category Add
+        </a>
+        <a class="nav-link" asp-controller="Master" asp-action="AddSubCategory" asp-area="">
+            Sub Category Add
+        </a>
+        <a class="nav-link" asp-controller="Master" asp-action="AddPackageType" asp-area="">
+            PackageType Add
+        </a>
+        <a class="nav-link active" href="javascript:;">
+            Flavour Add
+        </a>
+    </div>
+    <div class="card-body">
+        <h6 class="view-form-details__title mt-0">Flavour Add</h6>
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="txtFlavour" name="txtFlavour" placeholder="Flavour Name">
+                    <label for="txtFlavour">Flavour Name<span class="text-danger">*</span></label>
+
+                    <span class="text-danger" id="errtxtBatch"></span>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4">
+            <input type="button" value="Submit" class="btn btn-primary rounded-pill btn-lg" id="FinalSubmit">
+            <button onclick="window.location.reload();" class="btn btn-secondary rounded-pill btn-lg">
+                Reset
+            </button>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" nonce="uG2bsk6JIH923nsvp01n24KE">
+    $("#FinalSubmit").on("click", function () {
+      //if (Validations()) {
+        var TroupeData = new FormData();
+        TroupeData.append("FlavorName", $('#txtFlavour').val());
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You want to save the Details.",
+            icon: 'success',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Submit'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                AddTroupeData(TroupeData);
+            }
+        });
+     // }
+        function AddTroupeData(Data) {
+            $.ajax({
+                type: "post",
+                url: "../Master/AddFlavour",
+                contentType: false,
+                processData: false,
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("RequestVerificationToken",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                data: Data,
+                success: function (response) {
+                    response = JSON.parse(response);
+                    if (response.data == 1) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: response.message
+                        }).then(() => {
+                            window.location.href = 'AddFlavour';
+                        });
+                    }
+                    else if (response.data == 0) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'warning',
+                            text: response.message
+                        });
+                    }
+
+                    else {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'waring',
+                            text: response.message
+                        });
+                    }
+                },
+                error: function (error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!!',
+                        text: error
+                    });
+                }
+            });
+        }
+
+    });
+</script>

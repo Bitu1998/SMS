@@ -94,5 +94,100 @@ namespace SMS.Repository.Repositories.Repository
             var results = await Connection.QueryAsync<ImageMaster>("SP_Master", objParam, commandType: CommandType.StoredProcedure);
             return results.ToList();
         }
+        public async Task<int> AddBrand(BrandMaster user)
+        {
+            try
+            {
+                var p = new DynamicParameters();
+                p.Add("@P_Command", "BI");
+                p.Add("@BrandName", user.BrandName);
+                p.Add("@CreatedBy", user.CreatedBy);
+                p.Add("@IsSuccess", dbType: DbType.Int32, direction: ParameterDirection.Output);
+                p.Add("@Message", dbType: DbType.String, direction: ParameterDirection.Output, size: 5215585);
+                await Connection.ExecuteAsync("SP_Master_Add", p, commandType: CommandType.StoredProcedure);
+                int returnVal = p.Get<int>("@IsSuccess");
+                return returnVal;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public async Task<int> AddCategory(ProductCategoriesMaster user)
+        {
+            try
+            {
+                var p = new DynamicParameters();
+                p.Add("@P_Command", "CI");
+                p.Add("@CategoryName", user.CategoryName);
+                p.Add("@CreatedBy", user.CreatedBy);
+                p.Add("@IsSuccess", dbType: DbType.Int32, direction: ParameterDirection.Output);
+                p.Add("@Message", dbType: DbType.String, direction: ParameterDirection.Output, size: 5215585);
+                await Connection.ExecuteAsync("SP_Master_Add", p, commandType: CommandType.StoredProcedure);
+                int returnVal = p.Get<int>("@IsSuccess");
+                return returnVal;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public async Task<int> AddSubCategory(ProductSubCategoriesMaster user)
+        {
+            try
+            {
+                var p = new DynamicParameters();
+                p.Add("@P_Command", "SCI");
+                p.Add("@CategoryID", user.CategoryID);
+                p.Add("@SubCategoryName", user.SubCategoryName);
+                p.Add("@CreatedBy", user.CreatedBy);
+                p.Add("@IsSuccess", dbType: DbType.Int32, direction: ParameterDirection.Output);
+                p.Add("@Message", dbType: DbType.String, direction: ParameterDirection.Output, size: 5215585);
+                await Connection.ExecuteAsync("SP_Master_Add", p, commandType: CommandType.StoredProcedure);
+                int returnVal = p.Get<int>("@IsSuccess");
+                return returnVal;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public async Task<int> AddPackageType(PackageTypeMaster user)
+        {
+            try
+            {
+                var p = new DynamicParameters();
+                p.Add("@P_Command", "PTI");
+                p.Add("@PackageTypeName", user.PackageTypeName);                
+                p.Add("@IsSuccess", dbType: DbType.Int32, direction: ParameterDirection.Output);
+                p.Add("@Message", dbType: DbType.String, direction: ParameterDirection.Output, size: 5215585);
+                await Connection.ExecuteAsync("SP_Master_Add", p, commandType: CommandType.StoredProcedure);
+                int returnVal = p.Get<int>("@IsSuccess");
+                return returnVal;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public async Task<int> AddFlavour(FlavorMaster user)
+        {
+            try
+            {
+                var p = new DynamicParameters();
+                p.Add("@P_Command", "FI");
+                p.Add("@FlavorName", user.FlavorName);
+                p.Add("@CreatedBy", user.CreatedBy);
+                p.Add("@IsSuccess", dbType: DbType.Int32, direction: ParameterDirection.Output);
+                p.Add("@Message", dbType: DbType.String, direction: ParameterDirection.Output, size: 5215585);
+                await Connection.ExecuteAsync("SP_Master_Add", p, commandType: CommandType.StoredProcedure);
+                int returnVal = p.Get<int>("@IsSuccess");
+                return returnVal;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

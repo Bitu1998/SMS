@@ -13,5 +13,12 @@ namespace SMS.Repository.Repositories.Interfaces
         Task<List<ProductSubCategoriesMaster>> GetAllSubCategories(int categoryid); //depeend upon categories
         Task<List<UnitMaster>> GetAllUnits(); //e.g like ml,g,liter,kg
         Task<List<ImageMaster>> GetAllImage(); //e.g like image
+        #region Master Add
+        Task<int> AddBrand(BrandMaster user);
+        Task<int> AddCategory(ProductCategoriesMaster user);
+        Task<int> AddSubCategory(ProductSubCategoriesMaster user);
+        Task<int> AddPackageType(PackageTypeMaster user);
+        Task<int> AddFlavour(FlavorMaster user);
+        #endregion
     }
 }
