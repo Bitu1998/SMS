@@ -521,6 +521,74 @@ namespace SMS.Web.Controllers
                 return RedirectToAction("SessionOut", "Home");
             }
         }
+        public IActionResult AddImage()
+        {
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        
+        public async Task<IActionResult> AddImage(string ImageName, IFormFile ImageFile)
+        {
+            if (User?.Identity?.IsAuthenticated == true)
+            {
+                if (User.FindFirst("UID")?.Value != null)
+                {
+                    try
+                    {
+                        if (ImageFile != null && ImageFile.Length > 0)
+                        {
+                            // Generate unique name
+                            var fileExt = Path.GetExtension(ImageFile.FileName);
+                            var uniqueName = $"{Guid.NewGuid()}{fileExt}";
+
+                            var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ProductImage");
+
+                            if (!Directory.Exists(uploadPath))
+                                Directory.CreateDirectory(uploadPath);
+
+                            var fullPath = Path.Combine(uploadPath, uniqueName);
+                            using (var stream = new FileStream(fullPath, FileMode.Create))
+                            {
+                                await ImageFile.CopyToAsync(stream);
+                            }
+
+                            // Save to DB
+                            var imageMaster = new ImageMaster
+                            {
+                                ImageName = ImageName,
+                                ImageGeneratedName = uniqueName
+                            };
+
+                            int retval = await _masterService.AddImage(imageMaster);
+
+                            if (retval == 1)
+                                return Content(new AjaxResult { state = ResultType.success.ToString(), message = "Image Added Successfully", data = retval }.ToJson());
+                            else if (retval == 0)
+                                return Content(new AjaxResult { state = ResultType.success.ToString(), message = "Record Already Exists!", data = retval }.ToJson());
+                            else
+                                return Content(new AjaxResult { state = ResultType.success.ToString(), message = "Error Saving Image", data = retval }.ToJson());
+                        }
+
+                        return Content(new AjaxResult { state = ResultType.error.ToString(), message = "No image selected." }.ToJson());
+                    }
+                    catch (Exception ex)
+                    {
+                        return Content(new AjaxResult { state = ResultType.error.ToString(), message = ex.Message }.ToJson());
+                    }
+                }
+                else
+                {
+                    return View("UnauthorizedAccess");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SessionOut", "Home");
+            }
+        }
+
+
         #endregion
     }
 }

@@ -19,6 +19,7 @@ namespace SMS.Repository.Repositories.Interfaces
         Task<int> AddSubCategory(ProductSubCategoriesMaster user);
         Task<int> AddPackageType(PackageTypeMaster user);
         Task<int> AddFlavour(FlavorMaster user);
+        Task<int> AddImage(ImageMaster image);
         #endregion
     }
 }

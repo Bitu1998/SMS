@@ -189,5 +189,27 @@ namespace SMS.Repository.Repositories.Repository
                 throw;
             }
         }
+        public async Task<int> AddImage(ImageMaster image)
+        {
+            try
+            {
+                var p = new DynamicParameters();
+                p.Add("@P_Command", "II"); // Assuming "IM" is the command for Insert Image
+                p.Add("@ImageName", image.ImageName);
+                p.Add("@ImageGeneratedName", image.ImageGeneratedName);
+                p.Add("@CreatedBy", image.CreatedBy); // If you track CreatedBy
+                p.Add("@IsSuccess", dbType: DbType.Int32, direction: ParameterDirection.Output);
+                p.Add("@Message", dbType: DbType.String, direction: ParameterDirection.Output, size: 5215585);
+
+                await Connection.ExecuteAsync("SP_Master_Add", p, commandType: CommandType.StoredProcedure);
+                int returnVal = p.Get<int>("@IsSuccess");
+                return returnVal;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
     }
 }

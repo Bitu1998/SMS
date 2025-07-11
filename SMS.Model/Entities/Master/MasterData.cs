@@ -54,6 +54,7 @@ namespace SMS.Model.Entities.Master
         public int ImageID { get; set; }
         public string? ImageName { get; set; }
         public string? ImageGeneratedName { get; set; }
+        public string? CreatedBy { get; set; }
     }
 
 }
