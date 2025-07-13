@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using SMS.Core;
 using SMS.Model.DTOs;
 using SMS.Model.Entities.Master;
@@ -103,5 +104,76 @@ namespace SMS.Web.Controllers
             }
 
         }
+
+        [HttpGet]
+        public IActionResult ShipProduct()
+        {
+            return View();
+        }
+        [HttpGet]
+        public async Task<JsonResult> Get_Product()
+        {
+            
+            
+                List<Shipment> lst = await _TransactionRepository.Get_Product();
+                var jsonres = JsonConvert.SerializeObject(lst);
+
+                return Json(jsonres);
+            
+
+        }
+        [HttpGet]
+        public async Task<JsonResult> GetShipVariants(Shipment ship)
+        {
+            List<ShipmentDetails> lst = await _TransactionRepository.getproductdetails(ship);
+            var jsonres = JsonConvert.SerializeObject(lst);
+
+            return Json(jsonres);
+        }
+        [HttpPost]
+        public async Task<IActionResult> ShipProduct([FromBody] ShipmentBatchCompact batch)
+        {
+            if (User?.Identity?.IsAuthenticated == true)
+            {
+                if (User.FindFirst("UID")?.Value != null)
+                {
+                    try
+                    {
+                        batch.CreatedBy = User.FindFirst("FULLNAME")?.Value;
+                        int retval = await _TransactionRepository.ShipProduct(batch);
+
+                        if (retval == 1)
+                        {
+                            return Content(new AjaxResult
+                            {
+                                state = ResultType.success.ToString(),
+                                message = "Products shipped successfully",
+                                data = 1
+                            }.ToJson());
+                        }
+
+                        return Content(new AjaxResult
+                        {
+                            state = ResultType.error.ToString(),
+                            message = "Error in batch shipment",
+                            data = retval
+                        }.ToJson());
+                    }
+                    catch (Exception ex)
+                    {
+                        return Content(new AjaxResult
+                        {
+                            state = ResultType.error.ToString(),
+                            message = ex.Message
+                        }.ToJson());
+                    }
+                }
+
+                return View("UnauthorizedAccess");
+            }
+
+            return RedirectToAction("SessionOut", "Home");
+        }
+
     }
 }

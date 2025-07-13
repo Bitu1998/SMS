@@ -11,6 +11,9 @@ namespace SMS.Repository.Repositories.Interfaces
     public interface ITransactionRepository
     {
         Task<List<TransactionMaster>> GetAllProduct();
+        Task<List<Shipment>> Get_Product();
+        Task<List<ShipmentDetails>> getproductdetails(Shipment user);
         Task<int> AddProduct(TransactionMaster user);
+        Task<int> ShipProduct(ShipmentBatchCompact user);
     }
 }

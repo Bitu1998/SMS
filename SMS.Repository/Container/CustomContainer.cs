@@ -17,6 +17,7 @@ namespace SMS.Repository.Container
             services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
             services.AddScoped<IMasterRepository, MasterRepository>();
             services.AddScoped<ITransactionRepository, TransactionRepository>();
+            services.AddScoped<IReportRepository, ReportRepository>();
 
            
 

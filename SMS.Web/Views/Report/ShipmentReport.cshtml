@@ -1,0 +1,203 @@
+﻿@{
+    ViewData["Title"] = "Report";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+<style>
+
+    tr.total-row td {
+        font-weight: bold !important;
+        background-color: #f0f0f0 !important;
+    }
+</style>
+@Html.AntiForgeryToken()
+<div class="card card--lg main-card">
+    <div class="nav nav-tabs card--lg__tabs" id="nav-tab" role="tablist">
+        <a href="javascript:;" class="nav-link active">
+            Shipment Report
+        </a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive--rounded table-responsive--datatable">
+            <div class="table-responsive">
+                <table class="table table-borderless" id="datatable">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="text-center" style="width: 40px;">Sl#</th>
+                            <th scope="col">Shipped Date</th>
+                            <th scope="col">Product</th>
+                            @* <th scope="col">Batch No</th> *@
+                            <th scope="col">EXP Date</th>
+                            <th scope="col">Image</th>
+                            <th scope="col">Purchage Price(₹)</th>
+                            <th scope="col">Sell Price(₹)</th>
+                            <th scope="col">Available Quantity</th>
+                            <th scope="col">Shipped Qty</th>
+                            <th scope="col">TotalSellValue(₹)</th>
+                            <th scope="col">Shiped By</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bindtable">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" nonce="uG2bsk6JIH923nsvp01n24KE">
+    $(document).ready(function () {
+       LoadDataTable(0);
+    });
+    function LoadDataTable(defaultValue=0) {
+        var record = new Object();
+        let dtable = $('#datatable').DataTable({
+            "destroy": true,
+            "language": {
+                "emptyTable": 'No  Record Found.!',
+                "zeroRecords": 'No  Record Found.!',
+                "processing": false,
+            },
+            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            "dom": '<"row"<"col-sm-12 col-md-6 text-right"lB><"col-sm-12 col-md-6 text-right"f>><"row"<"col-sm-12"tr>><"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+            "deferRender": true,
+            "processing": false,
+            "searching": true,
+            "bSort": false,
+            "ajax": {
+                data: record,
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("RequestVerificationToken",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                url: '@Url.Action("GetShipmentDetails", "Report")',
+                type: "POST",
+                dataType: "json"
+            },
+            columnDefs: [
+                {
+                    targets: '_all',
+                    createdCell: function (td, cellData, rowData, row, col) {
+                        if (rowData.ProductDisplayName === "TOTAL") {
+                            $(td).css({ "font-weight": "bold", "background-color": "#f5f5f5" });
+                        }
+                    }
+                }
+            ],
+
+            columns:[
+                {
+                    data: null,
+                    name: "Slno",
+                    render: function (data, type, row, meta) {
+                        return row.ProductDisplayName === "TOTAL" ? "<strong></strong>" : meta.row + 1;
+                    }
+                },
+                { "data": "ShippedDate", "name": "ShippedDate" },
+                { "data": "ProductDisplayName", "name": "ProductDisplayName" },
+                // { "data": "BatchNo", "name": "BatchNo" },
+                { "data": "EXPDate", "name": "EXPDate" },
+                {
+                    data: "ImageGeneratedName",
+                    name: "ImageGeneratedName",
+                    render: function (data, type, row) {
+                        if (data) {
+                            return `
+                                <div style="text-align: center;">
+                                    <img src="/ProductImage/${data}" alt="${row.ImageName}"
+                                            style="width: 60px; height: 60px; object-fit: cover; border: 1px solid #ccc; border-radius: 4px; margin-bottom: 5px;" />
+                                    <div style="font-size: 12px; color: #333;">${row.ImageName}</div>
+                                </div>`;
+                        } else {
+                            return '<span></span>';
+                        }
+                    }
+                },
+                {
+                    data: "PurchasePrice",
+                    name: "PurchasePrice",
+                    render: function (data, type, row) {
+                        if (row.ProductDisplayName === "TOTAL") {
+                            return "";
+                        }
+                        return data !== null && data !== undefined ? `₹ ${parseFloat(data).toFixed(2)}` : "";
+                    }
+                },
+                {
+                    data: "SellPrice",
+                    name: "SellPrice",
+                    render: function (data, type, row) {
+                        if (row.ProductDisplayName === "TOTAL") {
+                            return "";
+                        }
+                        return data !== null && data !== undefined ? `₹ ${parseFloat(data).toFixed(2)}` : "";
+                    }
+                },
+                { "data": "AvailableQuantity", "name": "AvailableQuantity" },
+                { "data": "ShippedQty", "name": "ShippedQty" },
+                {
+                    data: "TotalSellValue",
+                    name: "TotalSellValue",
+                    render: function (data, type, row) {
+                        return data ? `₹ ${parseFloat(data).toFixed(2)}` : '';
+                    }
+                },
+                { "data": "CreatedBy", "name": "CreatedBy" },
+
+            ],
+            buttons:
+                [{
+                    extend: 'print',
+                    text: '<i class="fa fa-print"></i> Print',
+                    title: $('h1').text(),
+                    exportOptions: {
+                        columns: ':not(.no-print)'
+                    },
+                    footer: true,
+                    className: 'buttons-print btn-ps btn-sm',
+                    customize: function (win) {
+                        $(win.document.head).append("<link href='/css/styles.css' rel='stylesheet'><link href='/css/Print.css' rel='stylesheet'><link rel='stylesheet' href='/css/bootstrap.min.css'>");
+                        let datetime = moment().format('DD MMM YYYY hh:mm');
+                        let createdby = '@User.FindFirst("FULLNAME")?.Value.ToString()  ';
+
+                        $(win.document.body).prepend("<header><nav class='navbar navbar-expand-xl'><div class='container-fluid'><h1><a class='navbar-brand' title='Government of Odisha'><img src='/images/logo1.png' alt='Government of Odisha' class='navbar-brand__img'></a></h1><h5 class='page-name'>@ViewData["Title"]</h5></div></nav><div class='row'><div class='col-sm-6 float-start'><label><span class='font-bold'>Created On:</span>" + datetime + "</label></div><div class='col-sm-6 float-end'><label><span class='font-bold'>Created By:</span>" + createdby + "</label></div></div></header>");
+                        $(win.document.body).find('table').addClass('table-bordered');
+                    },
+                    autoPrint: true
+                },
+                {
+                    extend: 'excel',
+                    title: '@ViewData["Title"]',
+                    exportOptions: {
+                        columns: ':not(.no-print)'
+                    },
+                    className: 'btn btn-success btn-sm mx-1',
+                    text: '<i class="icon-excel"></i> Excel',
+                    className: 'buttons-excel  btn-cs btn-sm',
+                }, 'pdf']
+            ,
+            initComplete: function () {
+                $('.buttons-csv').html('<i class="bi bi-filetype-csv"></i>');
+                $('.buttons-excel').html('<i class="bi bi-file-earmark-excel-fill"></i>');
+                $('.buttons-pdf').html('<i class="bi bi-filetype-pdf"></i>');
+                $('.buttons-print').html('<i class="bi bi-file-earmark-text-fill"></i>');
+                $('.buttons-print').attr('data-toggle', 'tooltip');
+                $('.buttons-excel').attr('data-toggle', 'tooltip');
+                $('.buttons-print').attr('title', 'print table');
+                $('.buttons-excel').attr('title', 'export to excel');
+                $('.buttons-print').attr('data-placement', 'right');
+                $('.buttons-excel').attr('data-placement', 'right');
+                $('.buttons-print').tooltip({
+                    placement: 'bottom',
+                    title: function () {
+                        return "Print";
+                    }
+                });
+                $('.buttons-excel').tooltip({
+                    placement: 'right',
+                    title: function () {
+                        return "Export To Excel";
+                    }
+                });
+            }
+        });
+    }
+</script>

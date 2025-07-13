@@ -1,0 +1,297 @@
+﻿@{
+    ViewData["Title"] = "Ship Product";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+@Html.AntiForgeryToken()
+<div class="card card--lg main-card">
+    <div class="nav nav-tabs card--lg__tabs" id="nav-tab" role="tablist">
+        <a href="../Product/ShipProduct" class="nav-link active">
+            Ship
+        </a>
+       
+    </div>
+    <div class="card-body">
+        <div class="table-responsive--rounded table-responsive--datatable">
+            <div class="table-responsive">
+                <table class="table table-borderless" id="datatable">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="text-center" style="width: 40px;">Sl#</th>
+                            <th scope="col" style="display:none">ProductID</th>
+                            <th scope="col" style="display:none">FlavorID</th>
+                            <th scope="col" style="display:none">PackSizeID</th>
+                            <th scope="col" style="display:none">PackageTypeID</th>
+                            <th scope="col">Product Name</th>
+                            <th scope="col">Available Quantity</th>
+                            <th scope="col">Ship</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bindtable">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="shipModal" tabindex="-1" aria-labelledby="shipModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Ship Product</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Batch No</th>
+                            <th>EXP Date</th>
+                            <th>Available Qty</th>
+                            <th>Ship Qty</th>
+                        </tr>
+                    </thead>
+                    <tbody id="shipTableBody"></tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="submitShipVariants()">Ship</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript" nonce="uG2bsk6JIH923nsvp01n24KE">
+    $(document).ready(function () {
+       LoadDataTable();
+    });
+    function LoadDataTable() {
+        $.ajax({
+            type: 'Get',
+            dataType: 'Json',
+            contentType: 'application/json; charset=utf-8',
+            data: {},
+            url: "@Url.Action("Get_Product", "Product")",
+            success: function (result) {
+                var data1 = JSON.parse(result);
+                if (data1.length > 0) {
+                    $('#datatable.tbody').empty();
+                    $.each(data1, function (i, data) {
+                        var trows = "<tr>";
+                        trows = trows + "<td>" + (i + 1) + "</td>";
+                        trows = trows + "<td style='display:none;'>" + data.ProductID + "</td>";
+                        trows = trows + "<td style='display:none;'>" + data.FlavorID + "</td>";
+                        trows = trows + "<td style='display:none;'>" + data.PackSizeID +"</td>";
+                        trows = trows + "<td style='display:none;'>" + data.PackageTypeID + "</td>";
+                        
+                        trows = trows + "<td>" + data.DisplayName +"</td>";
+                        trows = trows + "<td>" + data.TotalAvailableQuantity +"</td>";
+                        trows = trows + "<td>" + "<a class='table__icon-btn ship-btn' data-bs-title='Ship' data-bs-toggle='tooltip' onclick='openShipModal(this)' data-productid='" + data.ProductID + "' data-flavorid='"+data.FlavorID+"' data-packsizeid='"+data.PackSizeID+"' data-packagetypeid='"+data.PackageTypeID+"' data-availablequantity='"+data.TotalAvailableQuantity+"'><i class='bi bi-truck' title='Ship'></i></a>" + "</td>";
+                        trows = trows + "</tr>";
+                        $('#datatable').append(trows);
+                    });
+                }
+                Datatable();
+            },
+            error: function (Message) {
+                alert(Message);
+            }
+        });
+    }
+    function openShipModal(element) {
+        const productId = element.getAttribute("data-productid");
+        const flavorId = element.getAttribute("data-flavorid");
+        const packSizeId = element.getAttribute("data-packsizeid");
+        const packageTypeId = element.getAttribute("data-packagetypeid");
+
+        $.ajax({
+            url: '/Product/GetShipVariants', // your controller endpoint
+            type: 'GET',
+            data: {
+                ProductID: productId,
+                FlavorID: flavorId,
+                PackSizeID: packSizeId,
+                PackageTypeID: packageTypeId
+            },
+            success: function (res) {
+                 let data = typeof res === "string" ? JSON.parse(res) : res;
+                let rows = '';
+                data.forEach(v => {
+                    rows += `
+                        <tr>
+                            <td>${v.BatchNo}</td>
+                            <td>${v.EXPDate}</td>
+                            <td>${v.AvailableQuantity}</td>
+                            <td>
+                                <input type="number" min="0" max="${v.AvailableQuantity}"
+                                        class="form-control ship-input"
+                                        data-variantid="${v.VariantID}"
+                                        data-available="${v.AvailableQuantity}">
+                            </td>
+                        </tr>
+                    `;
+                });
+                $("#shipTableBody").html(rows);
+                enforceShipInputLimits();
+                new bootstrap.Modal(document.getElementById('shipModal')).show();
+            },
+            error: function () {
+                Swal.fire('Error', 'Could not load shipment data.', 'error');
+            }
+        });
+    }
+
+
+    function ShipProduct(element) {
+        const ProductID = element.getAttribute("data-productid");
+        const FlavorID = element.getAttribute("data-flavorid");
+        const PackSizeID = element.getAttribute("data-packsizeid");
+        const PackageTypeID = element.getAttribute("data-packagetypeid");
+        const AvailableQty = parseInt(element.getAttribute("data-availablequantity"));
+
+        Swal.fire({
+            title: 'Enter quantity to ship',
+            input: 'number',
+            inputLabel: `Available quantity: ${AvailableQty}`,
+            inputAttributes: {
+                min: 1,
+                max: AvailableQty
+            },
+            inputValidator: (value) => {
+                if (!value || isNaN(value) || value <= 0) {
+                    return 'Please enter a valid positive quantity.';
+                }
+                if (parseInt(value) > AvailableQty) {
+                    return 'Cannot ship more than available quantity.';
+                }
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Ship',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const quantity = parseInt(result.value);
+
+                $.ajax({
+                    type: 'POST',
+                    dataType: 'json',
+                    url: '/Product/ShipProduct', // Adjust if needed
+                    data: {
+                        ProductID: ProductID,
+                        FlavorID: FlavorID,
+                        PackSizeID: PackSizeID,
+                        PackageTypeID: PackageTypeID,
+                        ShipQuantity: quantity
+                    },
+                    success: function (response) {
+                        Swal.fire('Success', response.message || 'Shipment completed.', 'success');
+                        // Optional: Refresh table, update UI
+                    },
+                    error: function () {
+                        Swal.fire('Error', 'Shipment failed. Try again later.', 'error');
+                    }
+                });
+            }
+        });
+    }
+        function enforceShipInputLimits() {
+        document.querySelectorAll(".ship-input").forEach(input => {
+            const maxQty = parseInt(input.getAttribute("data-available"));
+
+            input.addEventListener("keydown", function (e) {
+                const allowedKeys = [
+                    "Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"
+                ];
+
+                // Allow special keys
+                if (allowedKeys.includes(e.key)) return;
+
+                // Disallow anything that's not a digit
+                if (!/^[0-9]$/.test(e.key)) {
+                    e.preventDefault();
+                    return;
+                }
+
+                // Predict the new value if key is pressed
+                const currentValue = this.value;
+                const selectionStart = this.selectionStart;
+                const selectionEnd = this.selectionEnd;
+
+                const newValue =
+                    currentValue.substring(0, selectionStart) +
+                    e.key +
+                    currentValue.substring(selectionEnd);
+
+                const predicted = parseInt(newValue);
+
+                if (!isNaN(predicted) && predicted > maxQty) {
+                    e.preventDefault();
+                    Swal.fire('Limit Exceeded', `Maximum allowed quantity is ${maxQty}`, 'warning');
+                }
+            });
+
+            input.addEventListener("paste", function (e) {
+                const paste = e.clipboardData.getData("text");
+                const pasteQty = parseInt(paste);
+                if (!isNaN(pasteQty) && pasteQty > maxQty) {
+                    e.preventDefault();
+                    Swal.fire('Limit Exceeded', `Maximum allowed quantity is ${maxQty}`, 'warning');
+                }
+            });
+        });
+    }
+            function submitShipVariants() {
+        const inputs = document.querySelectorAll('.ship-input');
+        let variantShipPairs = [];
+
+        for (let input of inputs) {
+            const qty = parseInt(input.value);
+            const max = parseInt(input.getAttribute('data-available'));
+            const id = parseInt(input.getAttribute('data-variantid'));
+
+            if (!isNaN(qty) && qty > 0 && qty <= max) {
+                variantShipPairs.push(`${id}_${qty}`);
+            }
+        }
+
+        if (variantShipPairs.length === 0) {
+            Swal.fire('Warning', 'Enter at least one valid quantity to ship.', 'warning');
+            return;
+        }
+
+        const payload = {
+            VariantShipString: variantShipPairs.join(",")
+        };
+
+        $.ajax({
+            url: '/Product/ShipProduct',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(payload),
+            success: function (res) {
+                const parsed = typeof res === "string" ? JSON.parse(res) : res;
+                if (parsed.state === "success") {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: parsed.message
+                    }).then(() => {
+                        $('#shipModal').modal('hide');
+                        window.location.href = 'ShipProduct';
+                    });
+                   
+                } else {
+                    Swal.fire('Error', parsed.message || 'Failed to ship product.', 'error');
+                }
+            },
+            error: function () {
+                Swal.fire('Error', 'Server error while shipping.', 'error');
+            }
+        });
+    }
+
+
+
+</script>
